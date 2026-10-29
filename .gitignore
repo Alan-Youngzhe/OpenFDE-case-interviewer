@@ -1,0 +1,12 @@
+.DS_Store
+__pycache__/
+*.py[cod]
+.env
+.env.*
+node_modules/
+openfde-interview/
+session.json
+openfde.mjs
+openfde-config.json
+solution-template.json
+preview.html

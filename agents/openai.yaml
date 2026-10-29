@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenFDE 案例访谈"
+  short_description: "主动多轮追问项目细节、核对冲突，整理认证与渠道合作案例"
+  default_prompt: "使用 $openfde-case-interviewer 访谈我做过的项目。先阅读我授权的材料，逐轮追问缺项和矛盾，整理多个案例与附件，提交前让我确认。"
