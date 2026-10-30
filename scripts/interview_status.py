@@ -134,6 +134,37 @@ def inspect_session(session):
             else:
                 errors.append(f"{location}: 无效状态 {status}")
 
+        material_topic = topics.get("materials", {})
+        if isinstance(material_topic, dict) and material_topic.get("status") == "answered":
+            collection = case.get("material_collection", {})
+            location = f"{case_id}/material_collection"
+            state = collection.get("status") if isinstance(collection, dict) else None
+            if state is None or state == "pending":
+                outstanding.append({"case_id": case_id, "topic": "materials", "kind": "materials_pending"})
+            elif state == "received":
+                valid_sources(collection.get("source_refs"), location)
+                assets = collection.get("assets", [])
+                if not isinstance(assets, list) or not assets:
+                    errors.append(f"{location}: received 须有实际文件清单")
+                else:
+                    for asset in assets:
+                        if (not isinstance(asset, dict) or not all(nonempty(asset.get(k)) for k in ("id", "name", "local_path", "kind", "supports"))
+                                or not isinstance(asset.get("size"), int) or isinstance(asset.get("size"), bool) or asset["size"] <= 0):
+                            errors.append(f"{location}: 实际文件须有名称、路径、字节数、种类和支持内容")
+                        else:
+                            valid_sources(asset.get("source_refs"), location)
+            elif state == "link_only":
+                valid_sources(collection.get("source_refs"), location)
+                if not string_list(collection.get("links")) or not nonempty(collection.get("reason")):
+                    errors.append(f"{location}: link_only 须有已有链接和无上传文件的原因")
+            elif state in ("unavailable", "declined"):
+                valid_sources(collection.get("source_refs"), location)
+                if not nonempty(collection.get("reason")):
+                    errors.append(f"{location}: 须记录不能提供材料的原因")
+                has_answer(collection.get("question_ids"), case_id, "materials", location)
+            else:
+                errors.append(f"{location}: 无效材料状态")
+
         conflicts = case.get("conflicts", [])
         if not isinstance(conflicts, list):
             errors.append(f"案例 {case_id}: conflicts 必须是列表")

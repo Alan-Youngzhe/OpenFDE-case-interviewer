@@ -34,10 +34,12 @@ npx -y skills add Alan-Youngzhe/OpenFDE-case-interviewer --skill openfde-case-in
 
 [查看交互式问题树](docs/question-tree.html)（下载后用浏览器打开），或直接阅读[问题库](references/question-bank.md)。
 
-- 100 条可复用问题模板，覆盖 16 组访谈分支；根据缺口选用，不逐题机械询问。
+- 可复用问题模板覆盖 16 组访谈分支；根据缺口选用，不逐题机械询问。
 - 对每个案例检查 14 类主题，并映射已有案例库的 26 个字段。
 - 保存会话进度、问题回答、来源与冲突，支持暂停后继续。
+- 主动采集已有截图、交付文档和录屏，记录实际收件、仅链接与不能提供的原因。
 - 整理案例卡、当前可售范围及合作条件、附件与使用权限清单。
+- 上传后核对服务器附件，正式提交后核对提交快照，保留核验回执。
 - 为后续约 15 分钟人工认证访谈提炼关键决策、证据核验与未消解冲突。
 
 有标品时可进一步梳理典型任务、演示脚本与宣传素材。录屏、剪辑和视频生成依赖使用者环境中的相应工具，属于可选分支；没有现成工具时交付脚本和步骤。
@@ -59,7 +61,9 @@ references/question-bank.md      问题库
 references/coverage.md           字段映射、完成标准与会话格式
 references/follow-up-examples.md 多轮追问示例
 references/website.md            官网授权、预览与提交说明
+references/materials.md          材料采集、实际文件清单与核验
 scripts/interview_status.py      本地覆盖检查
+scripts/verify_submission.py     官网附件与正式提交快照核验
 docs/question-tree.html          可交互的问题树与模拟追问
 ```
 
@@ -73,4 +77,4 @@ python3 scripts/interview_status.py /path/to/openfde-interview/session.json
 
 退出码 0 表示覆盖记录可供用户确认，1 表示仍有待访项或会话已暂停/提前结束，2 表示记录结构存在问题。脚本只检查遗漏和状态，不能判断事实真假、认证资格或上传权限。
 
-当前已完成 Skill 结构校验和覆盖检查脚本的 12 项状态检查，问题树的 18 条模拟路径已验证；尚未完成真实 FDE 的全流程试访。官网的复制入口与本仓库安装命令需要在官网端另行配置。
+附件核验使用官方 CLI 导出的服务器记录，详见 [材料采集](references/materials.md) 和 [官网接入](references/website.md)。核验结果区分私有草稿与正式提交，不把口头承诺或演示链接算作已上传文件。

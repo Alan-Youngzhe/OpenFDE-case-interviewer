@@ -47,10 +47,24 @@ node ./openfde.mjs solution-upload --data-file ./solution.json --request-id REQU
 node ./openfde.mjs solution SOLUTION_ID --output ./existing-solution.json
 node ./openfde.mjs solution-update SOLUTION_ID --data-file ./existing-solution.json --version VERSION --request-id REQUEST_UUID --json
 node ./openfde.mjs solution-attach SOLUTION_ID --file ./approved-evidence.pdf --request-id REQUEST_UUID --json
-node ./openfde.mjs solution-submit SOLUTION_ID --version VERSION --confirm --request-id REQUEST_UUID --json
 ```
 
-新建、更新、附件和正式提交各用自己的稳定请求编号。更新保留导出的 ID/版本，只修改本次确认的字段。附件写入后先读取最新回执/版本，再正式提交。
+新建、更新、附件和正式提交各用自己的稳定请求编号。更新保留导出的 ID/版本，只修改本次确认的字段。附件写入后读取服务器记录，核对本批清单中的每个文件 ID、名称和实际字节数。使用正式 CLI 导出与本 Skill 的校验脚本：
+
+```sh
+node ./openfde.mjs solution SOLUTION_ID --output ./draft-receipt.json
+python3 /path/to/openfde-case-interviewer/scripts/verify_submission.py ./attachment-manifest.json ./draft-receipt.json
+```
+
+本人确认提交评审后，使用核对过的当前版本执行 `solution-submit`，再导出不同文件名的记录并核验正式提交快照：
+
+```sh
+node ./openfde.mjs solution-submit SOLUTION_ID --version VERSION --confirm --request-id REQUEST_UUID --json
+node ./openfde.mjs solution SOLUTION_ID --output ./submission-receipt.json
+python3 /path/to/openfde-case-interviewer/scripts/verify_submission.py ./attachment-manifest.json ./submission-receipt.json --submitted
+```
+
+清单格式与无附件处理见 [材料采集](materials.md)。核验通过后，将结果摘要、官网案例 ID、正式提交版本和附件数量交给本人。核验失败时如实说明已完成到哪一步，先查服务器记录、按原请求编号恢复；不要把仅上传草稿说成已提交评审。
 
 正式提交的 `--confirm` 只在本人已经确认该批材料真实、有权提供并按要求脱敏，且明确同意提交评审时使用。私有草稿只有本人可见；正式提交后评审可读提交快照，后续修改需再次提交才更新评审内容。案例提交不等于公开发布、认证申请提交或认证通过。
 
